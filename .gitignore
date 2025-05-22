@@ -1,0 +1,15 @@
+backend-server/node_modules/
+
+# Server/Client typical ignores
+node_modules/
+.env
+
+.env.* 
+dist/
+build/
+
+# OS & IDE files
+.DS_Store
+.vscode/
+*.log
+logs/
