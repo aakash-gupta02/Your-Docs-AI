@@ -25,9 +25,9 @@ const LoginPage = () => {
         password,
       });
 
-      const { token, user } = res.data; // e.g., { token: '...', user: {...} }
-      login(token, user);
-      console.log("apna wala console log :", { token, user });
+      const { token, User } = res.data; // e.g., { token: '...', user: {...} }
+      login(token, User);
+      console.log("apna wala console log :", { token, User });
 
       console.log("Login Successful:", res);
       setMessage("Login successful!");
@@ -49,7 +49,8 @@ const LoginPage = () => {
   return (
     <section className="container mx-auto justify-center items-center flex h-screen">
       <div className="w-full max-w-sm mx-auto">
-        <h1 className="font-roboto text-4xl font-bold text-center text-gray-800 mb-12">
+
+        <h1 className="font-roboto text-4xl text-white font-bold text-center  mb-12">
           Login
         </h1>
 
@@ -65,7 +66,7 @@ const LoginPage = () => {
           <div className="flex flex-col mb-4 w-full">
             <label
               htmlFor="email"
-              className="text-[#5a7184] font-semibold block"
+              className=" font-semibold block text-white "
             >
               Email
             </label>
@@ -77,14 +78,14 @@ const LoginPage = () => {
                 setemail(e.target.value);
               }}
               placeholder="Enter email"
-              className="placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border border-[#c3cad9]"
+              className="placeholder:text-gray-800/70 text-black mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border border-[#c3cad9]"
             />
           </div>
 
           <div className="flex flex-col mb-6 w-full relative">
             <label
               htmlFor="password"
-              className="text-[#5a7184] font-semibold block"
+              className="text-white font-semibold block"
             >
               Password
             </label>
@@ -96,11 +97,11 @@ const LoginPage = () => {
               }}
               id="password"
               placeholder="Enter password"
-              className="placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border border-[#c3cad9]"
+              className="placeholder:text-gray-800/70 text-black mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border border-[#c3cad9]"
             />
             <span
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-5 top-[52px] text-xl font-medium text-indigo-600 cursor-pointer"
+              className="absolute right-5 top-[52px] text-xl font-medium text-blue-600 cursor-pointer"
             >
               {showPassword ? <IoEyeOutline /> : <FaRegEyeSlash />}
             </span>
@@ -108,20 +109,21 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="bg-indigo-600 text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6"
+            className="bg-blue-600 text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6"
           >
             Login
           </button>
 
-          <p className="text-sm font-semibold text-[#5a7184] text-left">
+          <p className="text-sm font-semibold text-white text-left">
             Don’t have an account?{" "}
             <span
               onClick={() => navigate("/register")}
-              className="text-indigo-600 text-base cursor-pointer"
+              className="text-blue-500 text-base cursor-pointer"
             >
               Register now
             </span>
           </p>
+
         </form>
       </div>
     </section>

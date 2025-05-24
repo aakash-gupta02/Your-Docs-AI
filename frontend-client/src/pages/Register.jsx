@@ -24,7 +24,7 @@ const RegisterPage = () => {
       const { data } = await axios.post(
         "http://localhost:3000/api/auth/register",
         {
-          name,
+          username : name,
           email,
           password,
         }
@@ -54,7 +54,7 @@ const RegisterPage = () => {
   return (
     <section className="container mx-auto justify-center items-center flex h-screen ">
       <div className="w-full max-w-sm mx-auto">
-        <h1 className="font-roboto text-4xl font-bold text-center text-gray-800 mb-12">
+        <h1 className="font-roboto text-4xl font-bold text-center text-white mb-12">
           Sign Up
         </h1>
 
@@ -70,7 +70,7 @@ const RegisterPage = () => {
           <div className="flex flex-col mb-4 w-full">
             <label
               htmlFor="name"
-              className="text-[#5a7184] font-semibold block"
+              className="text-white  font-semibold block"
             >
               Name
             </label>
@@ -88,7 +88,7 @@ const RegisterPage = () => {
           <div className="flex flex-col mb-4 w-full">
             <label
               htmlFor="email"
-              className="text-[#5a7184] font-semibold block"
+              className="text-white  font-semibold block"
             >
               Email
             </label>
@@ -107,7 +107,7 @@ const RegisterPage = () => {
           <div className="flex flex-col mb-6 w-full relative">
             <label
               htmlFor="password"
-              className="text-[#5a7184] font-semibold block"
+              className="text-white  font-semibold block"
             >
               Password
             </label>
@@ -123,7 +123,7 @@ const RegisterPage = () => {
             />
             <span
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-5 top-[52px] text-xl font-medium text-indigo-600 cursor-pointer"
+              className="absolute right-5 top-[52px] text-xl font-medium text-blue-600 cursor-pointer"
             >
               {showPassword ? <IoEyeOutline /> : <FaRegEyeSlash />}
             </span>
@@ -131,16 +131,16 @@ const RegisterPage = () => {
 
           <button
             type="submit"
-            className="bg-indigo-600 text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6"
+            className="bg-blue-600 text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6"
           >
             Register
           </button>
 
-          <p className="text-sm font-semibold text-[#5a7184] text-left">
+          <p className="text-sm font-semibold text-white  text-left">
             You have an account?{" "}
             <span
               onClick={() => navigate("/login")}
-              className="text-indigo-600 text-base cursor-pointer"
+              className="text-blue-600 text-base cursor-pointer"
             >
               Login now
             </span>

@@ -22,6 +22,20 @@ export const createDoc = async (req, res) => {
   }
 };
 
+export const allDoc = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized: No user found" });
+    }
+
+    const all = await Doc.find({ user: req.user });
+    res.status(200).json(all);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const deleteDoc = async (req, res) => {
   const { id } = req.params;
   try {
@@ -50,11 +64,38 @@ export const updateDoc = async (req, res) => {
       return res.status(404).json({ message: "Docs not Found" });
     }
 
-    const updatedDoc = await Doc.findByIdAndUpdate(id, { title, content }, { new: true });
-    res.status(200).json({ message: "updated Successfully", updatedDoc } );
-
+    const updatedDoc = await Doc.findByIdAndUpdate(
+      id,
+      { title, content },
+      { new: true }
+    );
+    res.status(200).json({ message: "updated Successfully", updatedDoc });
   } catch (error) {
     res.status(400).json({ message: "internal server error" });
     console.log(error);
   }
 };
+
+export const oneDoc = async (req, res)=>{
+  const {id} = req.params
+  console.log(id);
+  
+
+  try {
+    const oneDoc = await Doc.findById(id)
+
+    if(!oneDoc){
+      return res.status(400).json({message:"No Doc Found"})
+    }
+
+    res.status(200).json(oneDoc)
+
+    
+    
+    
+
+  } catch (error) {
+    res.status(400).json({ message: "internal server error" });
+    console.log(error);
+  }
+}
