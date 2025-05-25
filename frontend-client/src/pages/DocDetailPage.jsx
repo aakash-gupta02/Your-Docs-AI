@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import DocumentAIDropdown from "../Components/DocumentAIDropdown";
+import DocumentActionsMenu from "../Components/DocumentActionsMenu";
 
 const DocDetailPage = () => {
   const { id } = useParams();
@@ -76,11 +77,8 @@ const DocDetailPage = () => {
         title: doc.title,
         text: doc.content.substring(0, 100) + "...",
         url: window.location.href,
-
       });
-      toast.success('Share or Copy the Link!');
-
-
+      toast.success("Share or Copy the Link!");
     } catch (err) {
       // Fallback for non-share API browsers
       navigator.clipboard.writeText(window.location.href);
@@ -130,21 +128,15 @@ const DocDetailPage = () => {
           >
             <i className="ri-arrow-left-line mr-2"></i> Back
           </button>
-          <div className="flex gap-4">
-            <button
-              onClick={() => setShowEditModal(true)}
-              // className="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg flex items-center"
-              className="rounded-lg flex items-center text-white hover:text-green-500"
-            >
-              <i className="ri-edit-line mr-2"></i> Edit
-            </button>
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              // className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center"
-              className="rounded-lg flex items-center texwhtext-white hover:text-red-700"
-            >
-              <i className="ri-delete-bin-line mr-2"></i> Delete
-            </button>
+
+          <div className="flex gap-2">
+
+              <DocumentAIDropdown documentContent={doc.content} />
+
+
+     
+
+
           </div>
         </div>
 
@@ -162,23 +154,24 @@ const DocDetailPage = () => {
             </div>
 
             <div className="flex items-center gap-1">
+                     <button
+              onClick={() => setShowEditModal(true)}
+              // className="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg flex items-center"
+              className="rounded-lg flex items-center text-white hover:text-green-500"
+            >
+              <i className="ri-edit-line mr-2"></i> Edit
+            </button>
 
- <DocumentAIDropdown documentContent={doc.content} />
-
-              <button
-                onClick={handleDownload}
-                className="p-2 rounded-md hover:bg-zinc-600 transition duration-200"
-              >
-                <i className="ri-download-line text-lg"></i>
-              </button>
-
-              <button
-                onClick={handleShare}
-                className="p-2 rounded-md hover:bg-zinc-600 transition duration-200"
-              >
-                <i className="ri-share-line text-lg"></i>
-              </button>
+            <DocumentActionsMenu
+              documentName={doc.title}
+              documentContent={doc.content}
+              onDelete={() => setShowDeleteModal(true)}
+              onEdit={() => setShowEditModal(true)}
+              onShare={() => handleShare()}
+              onDownload={() => handleDownload()}
+            />
             </div>
+            
           </div>
           {/* <div className="flex gap-3">
             <button
