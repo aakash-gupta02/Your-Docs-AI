@@ -5,7 +5,6 @@ import ForeBg from '../Components/ForeBg'
 const Home = () => {
   return (
 <>
-
 <Bg/>
 <ForeBg/>
 

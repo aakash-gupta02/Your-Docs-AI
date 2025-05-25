@@ -1,53 +1,26 @@
-// import React from "react";
-
-// function InputBar({ showInput, task, setTask, submitHandler }) {
-//   return (
-//     <div
-//       className={`fixed top-6 flex items-center gap-3 transition-all duration-700 ease-in-out z-40 ${
-//         showInput
-//           ? "left-1/2 -translate-x-1/2 opacity-100"
-//           : "-translate-x-full left-0 opacity-0"
-//       }`}
-//     >
-//       <form
-//         className="flex items-center justify-center gap-5"
-//         onSubmit={submitHandler}
-//       >
-//         <input
-//           value={task}
-//           onChange={(e) => setTask(e.target.value)}
-//           type="text"
-//           placeholder="Enter your task..."
-//           className="px-4 py-2 rounded-full outline-none text-black w-64"
-//         />
-//         <button className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">
-//           Add Task
-//         </button>
-//       </form>
-
-      
-//     </div>
-//   );
-// }
-
-// export default InputBar;
-
-
-
-
+import { motion } from "framer-motion";
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
-function InputBar() {
+import toast from "react-hot-toast";
+function InputBar({ onDocCreated }) {
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const {user} = useAuth()
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+
     if (!title.trim() || !description.trim()) {
       toast.error("Both fields are required.");
+      return;
+    }
+
+      if (!user) {
+      toast.error("Please login to Create a Docs");
       return;
     }
 
@@ -69,6 +42,7 @@ function InputBar() {
       setTitle("");
       setDescription("");
       setShowInput(false);
+      onDocCreated()
     } catch (err) {
       toast.error(err.response?.data?.message || "Upload failed");
       console.error(err);
@@ -76,40 +50,67 @@ function InputBar() {
   };
 
   return (
-    <div className="fixed top-6 left-6 z-50">
-      <button
-        onClick={() => setShowInput(!showInput)}
-        className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700"
-      >
-        {showInput ? "Close" : "Add Doc"}
-      </button>
+    <div className=" z-50 text-white">
+<button
+  onClick={() => setShowInput(!showInput)}
+  className="group flex items-center overflow-hidden bg-sky-600 hover:bg-sky-700 text-white rounded-full transition-all duration-300 pl-3 pr-3 py-2 max-w-[44px] hover:max-w-[160px]"
+>
+  <i className="ri-add-line text-lg font-extrabold " />
+  <span className="ml-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+    Add Doc
+  </span>
+</button>
+
 
       {showInput && (
-        <form
-          onSubmit={submitHandler}
-          className="mt-4 bg-white p-4 rounded-xl shadow-lg flex flex-col gap-4 w-80"
+    
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowInput(false)}
         >
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-            className="border px-3 py-2 rounded"
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description / Content"
-            rows={4}
-            className="border px-3 py-2 rounded resize-none"
-          ></textarea>
-          <button
-            type="submit"
-            className="bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          <motion.div
+            initial={{ scale: 0.9 }}
+            animate={{ scale: 1 }}
+            className="bg-zinc-900 rounded-3xl p-8 max-w-2xl w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            Upload Doc
-          </button>
-        </form>
+            <h3 className="text-xl font-semibold mb-4">Add Document</h3>
+
+            <input
+            placeholder="Enter Title here!"
+              type="text"
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
+              className="w-full bg-zinc-800/50 rounded-2xl p-4 text-gray-300 min-h-[20px] mb-6 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+
+            <textarea
+            placeholder="Enter Description here!"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full bg-zinc-800/50 rounded-2xl p-4 text-gray-300 min-h-[200px] mb-6 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => setShowInput(false)}
+                className="px-4 py-2 rounded-lg border border-gray-600 hover:bg-zinc-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitHandler}
+                className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 flex items-center"
+              >
+                <i className="ri-save-line mr-2"></i> Save
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );

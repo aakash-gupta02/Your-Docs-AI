@@ -235,12 +235,13 @@ const DocDetailPage = () => {
 
         {/* Edit Modal */}
         {showEditModal && (
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
-            onClick={() => setShowEditModal(false)}
-          >
+            onClick={() => setShowEditModal(false)}>
+              
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
@@ -279,7 +280,9 @@ const DocDetailPage = () => {
                 </button>
               </div>
             </motion.div>
+
           </motion.div>
+          
         )}
       </motion.div>
     </div>
