@@ -8,6 +8,7 @@ import "./config/db.js"
 // // import routes (you'll create these)
 import authRoutes from "./routes/auth.routes.js";
 import docRoutes from "./routes/doc.routes.js";
+import aiRoutes from "./routes/ai.route.js"
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 app.use("/api/docs", docRoutes);
+
+app.use("/api/ai",aiRoutes)
 
 // root
 app.get("/", (req, res) => {

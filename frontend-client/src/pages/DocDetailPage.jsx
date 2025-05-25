@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import DocumentAIDropdown from "../Components/DocumentAIDropdown";
 
 const DocDetailPage = () => {
   const { id } = useParams();
@@ -10,17 +12,21 @@ const DocDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editedContent, setEditedContent] = useState('');
+  const [editedContent, setEditedContent] = useState("");
+  const [editedTitle, seteditedTitle] = useState("");
 
   // Fetch document details
   useEffect(() => {
     const fetchDoc = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/docs/read/${id}`);
+        const response = await axios.get(
+          `http://localhost:3000/api/docs/read/${id}`
+        );
         setDoc(response.data);
+        seteditedTitle(response.data.title);
         setEditedContent(response.data.content);
       } catch (error) {
-        console.error('Error fetching document:', error);
+        console.error("Error fetching document:", error);
       } finally {
         setLoading(false);
       }
@@ -32,9 +38,9 @@ const DocDetailPage = () => {
   const handleDelete = async () => {
     try {
       await axios.delete(`http://localhost:3000/api/docs/delete/${id}`);
-      navigate('/'); // Redirect to home after deletion
+      navigate("/"); // Redirect to home after deletion
     } catch (error) {
-      console.error('Error deleting document:', error);
+      console.error("Error deleting document:", error);
     }
   };
 
@@ -42,12 +48,43 @@ const DocDetailPage = () => {
   const handleUpdate = async () => {
     try {
       await axios.put(`http://localhost:3000/api/docs/update/${id}`, {
-        content: editedContent
+        title: editedTitle,
+        content: editedContent,
       });
-      setDoc({ ...doc, content: editedContent });
+      setDoc({ ...doc, title: editedTitle, content: editedContent });
       setShowEditModal(false);
     } catch (error) {
-      console.error('Error updating document:', error);
+      console.error("Error updating document:", error);
+    }
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([doc.content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${doc.title || "document"}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    toast.success("Download Started!!");
+  };
+
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: doc.title,
+        text: doc.content.substring(0, 100) + "...",
+        url: window.location.href,
+
+      });
+      toast.success('Share or Copy the Link!');
+
+
+    } catch (err) {
+      // Fallback for non-share API browsers
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
     }
   };
 
@@ -67,9 +104,19 @@ const DocDetailPage = () => {
     );
   }
 
+  const getByteSize = (text) => new TextEncoder().encode(text).length;
+
+  const formatBytes = (bytes) => {
+    if (bytes < 1024) return `${bytes} bytes`;
+    else if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    else return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const contentSize = formatBytes(getByteSize(doc.content));
+
   return (
     <div className="w-full min-h-screen bg-zinc-800 text-white p-8">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
@@ -77,22 +124,24 @@ const DocDetailPage = () => {
       >
         {/* Header with actions */}
         <div className="flex justify-between items-center mb-8">
-          <button 
+          <button
             onClick={() => navigate(-1)}
             className="flex items-center text-sky-400 hover:text-sky-300"
           >
             <i className="ri-arrow-left-line mr-2"></i> Back
           </button>
           <div className="flex gap-4">
-            <button 
+            <button
               onClick={() => setShowEditModal(true)}
-              className="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg flex items-center"
+              // className="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg flex items-center"
+              className="rounded-lg flex items-center text-white hover:text-green-500"
             >
               <i className="ri-edit-line mr-2"></i> Edit
             </button>
-            <button 
+            <button
               onClick={() => setShowDeleteModal(true)}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center"
+              // className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center"
+              className="rounded-lg flex items-center texwhtext-white hover:text-red-700"
             >
               <i className="ri-delete-bin-line mr-2"></i> Delete
             </button>
@@ -104,12 +153,45 @@ const DocDetailPage = () => {
           className="w-full bg-zinc-900/80 rounded-[40px] p-8 relative overflow-hidden shadow-lg shadow-blue-500/10"
           whileHover={{ scale: 1.01 }}
         >
-          <div className="flex items-center mb-6">
-            <span className="text-2xl mr-4">
-              <i className="ri-file-text-line"></i>
-            </span>
-            <h1 className="text-2xl font-semibold">{doc.title}</h1>
+          <div className="flex justify-between items-center mb-6 ">
+            <div className="flex items-center ">
+              <span className="text-2xl mr-4">
+                <i className="ri-file-text-line"></i>
+              </span>
+              <h1 className="text-2xl font-semibold">{doc.title}</h1>
+            </div>
+
+            <div className="flex items-center gap-1">
+
+ <DocumentAIDropdown documentContent={doc.content} />
+
+              <button
+                onClick={handleDownload}
+                className="p-2 rounded-md hover:bg-zinc-600 transition duration-200"
+              >
+                <i className="ri-download-line text-lg"></i>
+              </button>
+
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-md hover:bg-zinc-600 transition duration-200"
+              >
+                <i className="ri-share-line text-lg"></i>
+              </button>
+            </div>
           </div>
+          {/* <div className="flex gap-3">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+              }}
+            >
+              share{" "}
+            </button>
+            <button onClick={()=>{
+              handleDownload()
+            }} >Download</button>
+          </div> */}
 
           <div className="bg-zinc-800/50 rounded-3xl p-6 mb-6">
             <p className="whitespace-pre-line text-gray-300">{doc.content}</p>
@@ -117,34 +199,37 @@ const DocDetailPage = () => {
 
           <div className="flex justify-between items-center text-sm text-gray-400">
             <span>Created: {new Date(doc.createdAt).toLocaleDateString()}</span>
-            <span>Size: {doc.size || '2.4 mb'}</span>
+            <span>Size: {contentSize || "2.4 mb"}</span>
           </div>
         </motion.div>
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
             onClick={() => setShowDeleteModal(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               className="bg-zinc-900 rounded-3xl p-8 max-w-md w-full shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-xl font-semibold mb-4">Delete Document</h3>
-              <p className="text-gray-300 mb-6">Are you sure you want to delete this document? This action cannot be undone.</p>
+              <p className="text-gray-300 mb-6">
+                Are you sure you want to delete this document? This action
+                cannot be undone.
+              </p>
               <div className="flex justify-end gap-4">
-                <button 
+                <button
                   onClick={() => setShowDeleteModal(false)}
                   className="px-4 py-2 rounded-lg border border-gray-600 hover:bg-zinc-800"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleDelete}
                   className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 flex items-center"
                 >
@@ -157,32 +242,43 @@ const DocDetailPage = () => {
 
         {/* Edit Modal */}
         {showEditModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
             onClick={() => setShowEditModal(false)}
           >
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               className="bg-zinc-900 rounded-3xl p-8 max-w-2xl w-full shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-xl font-semibold mb-4">Edit Document</h3>
+
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={(e) => {
+                  seteditedTitle(e.target.value);
+                }}
+                className="w-full bg-zinc-800/50 rounded-2xl p-4 text-gray-300 min-h-[20px] mb-6 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+
               <textarea
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
                 className="w-full bg-zinc-800/50 rounded-2xl p-4 text-gray-300 min-h-[200px] mb-6 focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
+
               <div className="flex justify-end gap-4">
-                <button 
+                <button
                   onClick={() => setShowEditModal(false)}
                   className="px-4 py-2 rounded-lg border border-gray-600 hover:bg-zinc-800"
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   onClick={handleUpdate}
                   className="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 flex items-center"
                 >
@@ -198,128 +294,3 @@ const DocDetailPage = () => {
 };
 
 export default DocDetailPage;
-
-
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-// import { useParams, useNavigate } from 'react-router-dom';
-// import { motion } from 'framer-motion';
-
-// export default function DocDetailPage() {
-//   const { id } = useParams();
-//   const navigate = useNavigate();
-//   const [doc, setDoc] = useState(null);
-//   const [showDeleteModal, setShowDeleteModal] = useState(false);
-//   const [showEditModal, setShowEditModal] = useState(false);
-//   const [editData, setEditData] = useState({ title: '', content: '' });
-
-//   useEffect(() => {
-//     axios.get(`http://localhost:3000/api/docs/read/${id}`)
-//       .then(res => setDoc(res.data))
-//       .catch(err => console.error('Failed to fetch doc', err));
-//   }, [id]);
-
-//   const handleDelete = () => {
-//     axios.delete(`http://localhost:3000/api/docs/delete/${id}`)
-//       .then(() => navigate('/'))
-//       .catch(err => console.error('Delete failed', err));
-//   };
-
-//   const handleEdit = () => {
-//     axios.put(`http://localhost:3000/api/docs/update/${id}`, editData)
-//       .then(res => {
-//         setDoc(res.data);
-//         setShowEditModal(false);
-//       })
-//       .catch(err => console.error('Edit failed', err));
-//   };
-
-//   if (!doc) return <p className="text-white">Loading...</p>;
-
-//   return (
-//     <div className="min-h-screen bg-zinc-900 text-white p-10">
-//       <motion.div
-//         initial={{ opacity: 0, y: 50 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         className="bg-zinc-800 p-10 rounded-3xl shadow-lg max-w-2xl mx-auto"
-//       >
-//         <h1 className="text-3xl font-bold text-sky-500 mb-4">{doc.title}</h1>
-//         <p className="text-gray-300 mb-6 whitespace-pre-wrap">{doc.content}</p>
-//         <div className="flex justify-between">
-//           <button
-//             onClick={() => setShowEditModal(true)}
-//             className="bg-blue-600 hover:bg-blue-700 text-sm px-4 py-2 rounded"
-//           >
-//             Edit
-//           </button>
-//           <button
-//             onClick={() => setShowDeleteModal(true)}
-//             className="bg-red-600 hover:bg-red-700 text-sm px-4 py-2 rounded"
-//           >
-//             Delete
-//           </button>
-//         </div>
-//       </motion.div>
-
-//       {/* Delete Modal */}
-//       {showDeleteModal && (
-//         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-//           <div className="bg-zinc-800 p-8 rounded-xl shadow-xl">
-//             <h2 className="text-lg font-semibold mb-4">Are you sure you want to delete this document?</h2>
-//             <div className="flex justify-end gap-4">
-//               <button
-//                 onClick={() => setShowDeleteModal(false)}
-//                 className="px-4 py-2 text-sm bg-gray-600 rounded hover:bg-gray-700"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={handleDelete}
-//                 className="px-4 py-2 text-sm bg-red-600 rounded hover:bg-red-700"
-//               >
-//                 Confirm Delete
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       {/* Edit Modal */}
-//       {showEditModal && (
-//         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-//           <div className="bg-zinc-800 p-8 rounded-xl shadow-xl w-[400px]">
-//             <h2 className="text-lg font-semibold mb-4 text-sky-400">Edit Document</h2>
-//             <input
-//               type="text"
-//               value={editData.title}
-//               onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-//               placeholder="Title"
-//               className="w-full mb-4 p-2 bg-zinc-700 rounded text-white"
-//             />
-//             <textarea
-//               value={editData.content}
-//               onChange={(e) => setEditData({ ...editData, content: e.target.value })}
-//               placeholder="Content"
-//               className="w-full h-32 p-2 bg-zinc-700 rounded text-white"
-//             />
-//             <div className="flex justify-end gap-4 mt-4">
-//               <button
-//                 onClick={() => setShowEditModal(false)}
-//                 className="px-4 py-2 text-sm bg-gray-600 rounded hover:bg-gray-700"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={handleEdit}
-//                 className="px-4 py-2 text-sm bg-blue-600 rounded hover:bg-blue-700"
-//               >
-//                 Save Changes
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-

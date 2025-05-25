@@ -39,7 +39,9 @@ function TopActionBar({ showInput, toggleInput }) {
       toast.error("Please login to use this feature.");
     } else {
       // Open AI modal or run AI logic
-      console.log("AI Activated");
+
+      navigate("/ai-chat")
+
     }
   };
 
@@ -51,7 +53,7 @@ function TopActionBar({ showInput, toggleInput }) {
             <>
               {/* User Initials/Profile */}
               <div className="bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg">
-                {user.name?.[0].toUpperCase() || "U"}
+                {user.username?.[0].toUpperCase() || "U"}
               </div>
 
               {/* AI Button - Active */}

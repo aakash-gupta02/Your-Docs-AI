@@ -6,6 +6,7 @@ import DocDetailPage from "./pages/DocDetailPage"
 
 import Login from "./pages/Login"; // Uncomment when ready
 import Register from "./pages/Register"; // Uncomment when ready
+import AIChatPage from "./pages/AIChatPage";
 // import AIPage from "./pages/AIPage"; // Uncomment when ready
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
 
         
         <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+     
         
         <Routes>
           {/* Main Home Route */}
@@ -24,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/read/:id" element={<DocDetailPage />} />
+          <Route path="/ai-chat" element={<AIChatPage />} />
 
 
           

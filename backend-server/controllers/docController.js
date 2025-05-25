@@ -28,7 +28,7 @@ export const allDoc = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized: No user found" });
     }
 
-    const all = await Doc.find({ user: req.user });
+    const all = await Doc.find({ user: req.user }).sort({ createdAt: -1})
     res.status(200).json(all);
   } catch (error) {
     console.log(error);
@@ -78,7 +78,7 @@ export const updateDoc = async (req, res) => {
 
 export const oneDoc = async (req, res)=>{
   const {id} = req.params
-  console.log(id);
+  // console.log(id);
   
 
   try {
