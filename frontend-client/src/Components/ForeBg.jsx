@@ -6,14 +6,23 @@ import InputForm from "./InputForm";
 import TopActionBar from "./TopActionBar";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useDocTrial } from "./useDocTrial";
 
 function ForeBg() {
   const [docs, setDocs] = useState([]);
   const [dragConstraints, setDragConstraints] = useState(null);
 
-  const {user} = useAuth()
+  const { user } = useAuth();
 
   const ref = useRef();
+
+  const {
+    docCount,
+    setDocCount,
+    incrementDocCount,
+    canCreateDoc,
+    MAX_FREE_DOCS,
+  } = useDocTrial();
 
   useEffect(() => {
     if (ref.current) {
@@ -38,33 +47,73 @@ function ForeBg() {
     }
   };
 
+  // {user &&
+  // useEffect(() => {
+  //   fetchDocs();
+  // }, []);
 
-  {user && 
+  // }
+
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchDocs();
+  //   } else {
+  //     const localDocs = JSON.parse(localStorage.getItem("freeDocs") || "[]");
+  //     setDocs(localDocs);
+  //   }
+  // }, [user]);
+
+  const refreshDocs = () => {
+    if (user) {
+      fetchDocs();
+    } else {
+      const localDocs = JSON.parse(localStorage.getItem("freeDocs") || "[]");
+      setDocs(localDocs);
+      
+    }
+  };
+
+  // useEffect
   useEffect(() => {
-    fetchDocs();
-  }, []);
-
-  }
-
-
+    refreshDocs();
+  }, [user]);
 
   return (
     <div className="p-6 flex flex-wrap gap-6">
       <div className="flex items-center justify-between w-full  ">
-
-        <div className="flex-shrink-0">
+        {/* <div className="flex-shrink-0">
           <Link
             to="/"
             className="text-sky-400 font-bold text-xl flex items-center gap-1"
           >
             <i class="ri-robot-2-line"></i> Your Docs - AI
+            {!user && (
+              <div className="mb-4 text-sm absolute w-fit right-64 text-yellow-500">
+                Free trial: {docCount}/{MAX_FREE_DOCS} documents
+              </div>
+            )}
           </Link>
-        </div>{" "}
+        </div> */}
 
+        <div className="flex items-center gap-4">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-sky-400 hover:text-sky-300 transition-colors"
+          >
+            <i className="ri-robot-2-line text-2xl"></i>
+            <span className="font-bold text-xl">Your Docs - AI</span>
+          </Link>
+
+          {!user && (
+            <div className="bg-slate-800/50 px-3 py-1 rounded-full text-sm text-yellow-400">
+              {docCount}/{MAX_FREE_DOCS} Free Document
+            </div>
+          )}
+        </div>
 
         <div className="flex gap-2">
           <TopActionBar />
-          <InputForm onDocCreated={fetchDocs} />
+          <InputForm onDocCreated={refreshDocs} />
         </div>
       </div>
 
@@ -78,7 +127,7 @@ function ForeBg() {
           dragConstraints &&
           docs.map((doc) => (
             <CardTask
-              key={doc._id}
+              key={doc._id || doc.id}
               data={doc}
               dragConstraints={dragConstraints}
             />

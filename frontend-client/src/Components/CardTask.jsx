@@ -73,7 +73,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 function CardTask({ data, dragConstraints }) {
-  const { title, content, createdAt, _id } = data;
+  const { title, content, createdAt, _id, id } = data;
   const navigate = useNavigate();
   const [dragging, setDragging] = useState(false);
 
@@ -94,8 +94,11 @@ function CardTask({ data, dragConstraints }) {
 
   const handleClick = () => {
     if (!dragging) {
-      navigate(`/read/${_id}`);
+      // navigate(`/read/${_id}`);
+      navigate(`/read/${_id || id}`);
+
     }
+
   };
 
   return (
