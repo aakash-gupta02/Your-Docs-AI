@@ -1,8 +1,5 @@
 # Your Docs - AI
 
-![App Screenshot](https://i.imgur.com/example-screenshot.png)  
-*(Replace with your actual screenshot URL)*
-
 A smart document editor with AI-powered features, offering both cloud storage for registered users and a free trial for guests.
 
 ## 🌟 Features
