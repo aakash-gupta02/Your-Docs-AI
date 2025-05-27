@@ -34,6 +34,7 @@ A smart document editor with AI-powered features, offering both cloud storage fo
 | Feature | Screenshot |
 |---------|-----------|
 | Dashboard | ![Image](https://github.com/user-attachments/assets/cbb7008d-3f6d-45d9-8487-6453a84a15c1) |
+| AI Assistant | ![Image](https://github.com/user-attachments/assets/df7daeab-0bf9-4890-bd4b-6316f83f8cad) |
 | Docs Actions | ![Image](https://github.com/user-attachments/assets/0bdc51f9-9365-4c5a-a8db-1a7c72a9ffe4) |
 | AI Tools |![Image](https://github.com/user-attachments/assets/50e04483-4113-4a07-8682-b2b5809b624a) |
 | Document AI | ![Image](https://github.com/user-attachments/assets/7ae16043-af96-47ed-a064-fce59564e504) |
