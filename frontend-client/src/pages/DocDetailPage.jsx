@@ -365,6 +365,7 @@ const DocDetailPage = () => {
         </div>
 
         {/* Document Card */}
+        
         <motion.div
           className="w-full bg-zinc-900/80 rounded-[40px] p-8 relative overflow-hidden shadow-lg shadow-blue-500/10"
           whileHover={{ scale: 1.01 }}
@@ -434,33 +435,27 @@ const DocDetailPage = () => {
                     onShare={() => handleShare()}
                     onDownload={() => handleDownload()}
                   />
-
                 </>
               ) : (
-
                 <>
-                
-               
-                <button
-                  onClick={() => {
-                    // toast("🔒 Please login to edit documents", {
-                    //   icon: "ℹ️",
-                    //   style: {
-                    //     background: "#1e293b",
-                    //     color: "#f8fafc",
-                    //   },
-                    // });
+                  <button
+                    onClick={() => {
+                      // toast("🔒 Please login to edit documents", {
+                      //   icon: "ℹ️",
+                      //   style: {
+                      //     background: "#1e293b",
+                      //     color: "#f8fafc",
+                      //   },
+                      // });
 
-                    toast.success("Please login to Edit Documents")
+                      toast.success("Please login to Edit Documents");
+                    }}
+                    className="rounded-lg flex items-center text-gray-400 cursor-not-allowed"
+                  >
+                    <i className="ri-edit-line mr-2"></i> Edit
+                  </button>
 
-                  }}
-                  className="rounded-lg flex items-center text-gray-400 cursor-not-allowed"
-                
-                >
-                  <i className="ri-edit-line mr-2"></i> Edit
-                </button>
-
-                    <DocumentActionsMenu
+                  <DocumentActionsMenu
                     documentName={doc.title}
                     documentContent={doc.content}
                     onDelete={() => toast.error("Must login to use this")}
@@ -468,8 +463,7 @@ const DocDetailPage = () => {
                     onShare={() => handleShare()}
                     onDownload={() => handleDownload()}
                   />
-
-                 </>
+                </>
               )}
             </div>
           </div>
@@ -642,7 +636,6 @@ const DocDetailPage = () => {
             Free Trial Mode - {docCount}/{MAX_FREE_DOCS} documents used
           </motion.div>
         )}
-
       </motion.div>
     </div>
   );

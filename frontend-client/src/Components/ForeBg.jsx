@@ -80,6 +80,7 @@ function ForeBg() {
 
   return (
     <div className="p-6 flex flex-wrap gap-6">
+      
       <div className="flex items-center justify-between w-full  ">
         {/* <div className="flex-shrink-0">
           <Link
